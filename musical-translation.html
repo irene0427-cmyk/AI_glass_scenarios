@@ -50,8 +50,15 @@ body:fullscreen .stage{width:min(100%,calc((100svh - 410px)*16/9))}
 
 
 .scene-navigation{grid-template-columns:repeat(8,minmax(0,1fr))}
-.scene-background{transition:opacity .28s var(--ease),transform .55s var(--ease)}
-.scene-background.is-changing{opacity:.22;transform:scale(1.008)}
+.scene-background{transition:none}
+.scene-background.is-changing{opacity:1;transform:none}
+.live-translation{position:absolute;left:50%;bottom:5.2%;transform:translateX(-50%);min-width:42%;max-width:78%;padding:18px 30px;border-radius:28px;background:rgba(10,11,17,.88);border:1px solid rgba(180,194,255,.28);box-shadow:0 12px 36px rgba(0,0,0,.34);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;gap:18px;z-index:4;opacity:0}
+.live-translation.visible{opacity:1}
+.live-translation .wave{font-size:28px;font-weight:800;letter-spacing:-5px;color:#ffd76a;text-shadow:0 0 16px currentColor}
+.live-translation .typed{font-size:clamp(24px,2.2vw,40px);font-weight:760;letter-spacing:-1px;line-height:1.3;color:#ffd76a;white-space:nowrap;text-shadow:0 0 12px rgba(255,215,106,.18)}
+.live-translation .cursor{display:inline-block;width:2px;height:1em;margin-left:3px;background:currentColor;animation:blink .55s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media(max-width:680px){.live-translation{min-width:76%;padding:12px 18px;bottom:4%}.live-translation .typed{font-size:20px}.live-translation .wave{font-size:22px}}
 .scene-canvas{display:none}
 .stage::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 70%,#06071412)}
 .scene-nav-button{min-width:0}
@@ -76,7 +83,7 @@ body:fullscreen .stage{width:min(100%,calc((100svh - 410px)*16/9))}
 <main class="main">
 <div class="stage-wrap">
 <section class="stage" id="stage" aria-label="뮤지컬 청취 번역 시나리오 장면">
-<img id="scene-background" class="scene-background" alt="">
+<img id="scene-background" class="scene-background" alt=""><div id="live-translation" class="live-translation" aria-live="polite"><span class="wave">▮▮▮</span><span class="typed" id="typed-translation"></span></div>
 <div id="scene-canvas" class="scene-canvas"><div id="overlay-layer"></div></div>
 </section>
 </div>
@@ -100,14 +107,14 @@ body:fullscreen .stage{width:min(100%,calc((100svh - 410px)*16/9))}
 <nav class="scene-navigation" id="scene-navigation" aria-label="씬 선택"></nav>
 <div class="player-footer">
 <p><span class="legend-dot"></span><span id="phase-label">준비</span><span class="divider">/</span>장면 → 음성 → 다음 장면</p>
-<p id="audio-note">음성: 한국어 TTS · 나레이션/사용자 구분 <span class="divider">·</span> 체코어 대사는 화면 자막 중심</p>
+<p id="audio-note">음성: 중립 남성 나레이션 · 여성 사용자 음성 <span class="divider">·</span> 체코어 대사는 화면 자막 중심</p>
 </div>
 </section>
 </main>
 </div>
 <audio id="voice-player" preload="metadata" playsinline></audio>
 <script>
-const scenes=[{"title":"공연 시작 전","short":"공연장 도착","subtitle":"해외 여행 · 뮤지컬 공연 대기","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/62771bb0-10dd-46b6-bea1-4330247a405f.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230227_d0636a58-1185-4dfd-b3bf-cddabbd4b149.wav"},{"title":"청취 번역 모드 켜기","short":"모드 켜기","subtitle":"사용자 음성 명령 · 3인칭 시점","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/9224aadd-235e-4d31-8b79-847f85966df1.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230227_f65f9726-a711-4ef4-86ef-c900bbf6d917.wav"},{"title":"번역 설정","short":"번역 설정","subtitle":"체코어 인식 · 한국어 번역 · 자막 스타일 공연","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/7455608c-8412-4802-8efc-979616039855.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230227_cbc83200-25e2-471f-ba7a-e8af0b863fb6.wav"},{"title":"체코어 대사 인식","short":"대사 인식","subtitle":"실시간 음성 인식 · 1인칭 시점","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/eaea747c-c3cb-4677-83e5-8dc704dccb5e.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230227_d8bdcbc6-678e-4475-9c6f-4932aaa3deb3.wav"},{"title":"한국어 자막 표시","short":"첫 번역","subtitle":"체코어 → 한국어 실시간 번역","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/61e8a151-7b3c-4cf0-a6cb-99e28367c278.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230227_e3ade94a-e0e9-4067-b380-a71f0dc9cfd3.wav"},{"title":"상대 배우 대사 인식","short":"대화 이어짐","subtitle":"다음 화자의 대사를 계속 인식","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/277ae1f4-3f29-411b-8336-2404625497ac.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230227_90faaba1-e967-4ab0-bad8-09bbf3551f89.wav"},{"title":"배우별 자막 구분","short":"화자 구분","subtitle":"배우별 다른 자막 색상","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/8c67edb2-5820-4740-bd0a-9886d608bb1f.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230235_aecdd15e-f49b-4c01-bf8a-ce50b78ddefc.wav"},{"title":"청취 번역 모드 종료","short":"모드 끄기","subtitle":"공연 종료 · 사용자 음성 명령","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/e21f4631-c1f4-4664-8346-5676317b777d.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230235_f24cf2d5-687b-4ac8-8224-6d01370146e1.wav"}];
+const scenes=[{"title":"공연 시작 전","short":"공연장 도착","subtitle":"해외 여행 · 뮤지컬 공연 대기","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/62771bb0-10dd-46b6-bea1-4330247a405f.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230955_d6e33b2b-efac-48d6-be5e-3d3c827441de.wav"},{"title":"청취 번역 모드 켜기","short":"모드 켜기","subtitle":"사용자 음성 명령 · 3인칭 시점","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/9224aadd-235e-4d31-8b79-847f85966df1.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230227_f65f9726-a711-4ef4-86ef-c900bbf6d917.wav"},{"title":"번역 설정","short":"번역 설정","subtitle":"체코어 인식 · 한국어 번역 · 자막 스타일 공연","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/7455608c-8412-4802-8efc-979616039855.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230955_d7e6e3d1-7d60-4587-b9ca-1430d98cc503.wav"},{"title":"체코어 대사 인식","short":"대사 인식","subtitle":"실시간 음성 인식 · 1인칭 시점","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/eaea747c-c3cb-4677-83e5-8dc704dccb5e.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230955_735fa319-15e8-4930-9ab4-4205882aac8e.wav"},{"title":"한국어 자막 표시","short":"첫 번역","subtitle":"체코어 → 한국어 실시간 번역","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/eaea747c-c3cb-4677-83e5-8dc704dccb5e.png","typewriter":"제게 사랑을 맹세하세요.","captionColor":"#ffd76a","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230956_a95856e9-bb49-49ec-aa1a-d49999b21eaf.wav"},{"title":"상대 배우 대사 인식","short":"대화 이어짐","subtitle":"다음 화자의 대사를 계속 인식","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/277ae1f4-3f29-411b-8336-2404625497ac.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230955_d9a4f3ba-308e-47ef-b264-1faba1ad8077.wav"},{"title":"배우별 자막 구분","short":"화자 구분","subtitle":"배우별 다른 자막 색상","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/8c67edb2-5820-4740-bd0a-9886d608bb1f.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230955_47fcdfa5-0af9-4cf8-a7dd-867503a5796d.wav"},{"title":"청취 번역 모드 종료","short":"모드 끄기","subtitle":"공연 종료 · 사용자 음성 명령","image":"https://d2ol7oe51mr4n9.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/e21f4631-c1f4-4664-8346-5676317b777d.png","audio":"https://d8j0ntlcm91z4.cloudfront.net/user_3JHCElkGFsmPZFrL67etaeUahXW/hf_20261101_230235_f24cf2d5-687b-4ac8-8224-6d01370146e1.wav"}];
 const $=id=>document.getElementById(id);
 const bg=$('scene-background'),audio=$('voice-player');
 const icons={
@@ -119,7 +126,24 @@ next:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1
 play:'<svg viewBox="0 0 24 24"><path d="m7 4 14 8-14 8V4Z"/></svg>',
 pause:'<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>'
 };
-let index=0,playing=false,muted=false,transitionTimer=null;
+let index=0,playing=false,muted=false,transitionTimer=null,typingTimer=null;
+const liveCaption=$('live-translation'),typedTranslation=$('typed-translation');
+const imageCache=scenes.map(s=>{const im=new Image();im.src=s.image;return im;});
+const audioCache=scenes.map(s=>{const a=new Audio();a.preload='auto';a.src=s.audio;a.load();return a;});
+function stopTyping(){if(typingTimer){clearInterval(typingTimer);typingTimer=null;}typedTranslation.textContent='';liveCaption.classList.remove('visible');}
+function startTyping(text,color='#ffd76a'){
+  stopTyping();
+  liveCaption.style.color=color;
+  liveCaption.querySelector('.wave').style.color=color;
+  typedTranslation.style.color=color;
+  liveCaption.classList.add('visible');
+  let pos=0;
+  typingTimer=setInterval(()=>{
+    pos++;
+    typedTranslation.textContent=text.slice(0,pos);
+    if(pos>=text.length){clearInterval(typingTimer);typingTimer=null;}
+  },62);
+}
 $('sound-button').innerHTML=icons.volume;$('fullscreen-button').innerHTML=icons.fullscreen;$('prev-button').innerHTML=icons.prev;$('next-button').innerHTML=icons.next;
 function setPlayIcon(){ $('play-symbol').innerHTML=playing?icons.pause:icons.play; $('play-label').textContent=playing?'일시정지':'장면 재생';}
 function status(t,phase='준비'){ $('playback-status').textContent=t; $('phase-label').textContent=phase;}
@@ -128,24 +152,26 @@ function renderNav(){
  scenes.forEach((s,i)=>{const b=document.createElement('button');b.className='scene-nav-button';b.innerHTML='<span class="nav-number">'+String(i+1).padStart(2,'0')+'</span><span class="nav-label">'+s.short+'</span>';if(i===index)b.setAttribute('aria-current','step');b.onclick=()=>loadScene(i,true);nav.appendChild(b);});
 }
 function loadScene(i,autoplay=false){
- clearTimeout(transitionTimer);audio.pause();audio.currentTime=0;playing=false;setPlayIcon();
+ clearTimeout(transitionTimer);stopTyping();audio.pause();audio.currentTime=0;playing=false;setPlayIcon();
  index=(i+scenes.length)%scenes.length;const s=scenes[index];
- bg.classList.add('is-changing');
- const img=new Image();img.onload=()=>{bg.src=s.image;bg.alt=s.title;requestAnimationFrame(()=>bg.classList.remove('is-changing'));};img.src=s.image;
+ bg.src=s.image;bg.alt=s.title;
  $('scene-counter').textContent='SCENE '+String(index+1).padStart(2,'0')+' / '+String(scenes.length).padStart(2,'0');
  $('scene-title').textContent=s.title;$('scene-subtitle').textContent=s.subtitle;
  $('prev-button').disabled=index===0;$('next-button').disabled=index===scenes.length-1;
- audio.src=s.audio;audio.muted=muted;audio.load();renderNav();status('재생할 준비가 되었어요','준비');
- if(autoplay) setTimeout(playScene,420);
+ const cached=audioCache[index];
+ audio.src=(cached&&cached.currentSrc)||s.audio;audio.muted=muted;audio.load();renderNav();status('재생할 준비가 되었어요','준비');
+ if(autoplay) requestAnimationFrame(playScene);
 }
 function playScene(){
  if(playing){audio.pause();playing=false;setPlayIcon();status('잠시 멈췄어요','일시정지');return;}
  if(audio.ended||audio.currentTime>=audio.duration-.05) audio.currentTime=0;
+ const s=scenes[index];
+ if(s.typewriter) startTyping(s.typewriter,s.captionColor);
  const p=audio.play();playing=true;setPlayIcon();status('음성을 재생하고 있어요','음성 재생');
  if(p&&p.catch)p.catch(()=>{playing=false;setPlayIcon();status('재생 버튼을 눌러 음성을 시작해 주세요','재생 대기');});
 }
 audio.onpause=()=>{if(!audio.ended){playing=false;setPlayIcon();}};
-audio.onended=()=>{playing=false;setPlayIcon();status('장면을 확인했어요','완료');if($('auto-next').checked&&index<scenes.length-1){transitionTimer=setTimeout(()=>loadScene(index+1,true),700);}};
+audio.onended=()=>{playing=false;setPlayIcon();status('장면을 확인했어요','완료');if($('auto-next').checked&&index<scenes.length-1){loadScene(index+1,true);}};
 $('play-button').onclick=playScene;
 $('prev-button').onclick=()=>loadScene(index-1,false);
 $('next-button').onclick=()=>loadScene(index+1,false);
