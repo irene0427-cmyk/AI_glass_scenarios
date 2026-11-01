@@ -1,1 +1,19 @@
-
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>쇼핑메이트 — AI 글래스 쇼핑 시나리오</title>
+<style>body{margin:0;min-height:100vh;background:#101321;color:#f7f8ff;font:16px/1.7 system-ui,"Apple SD Gothic Neo",sans-serif;display:grid;place-items:center}main{padding:28px;text-align:center}h1{font-size:26px}p{color:#b0b6cb}button{background:#7658ff;color:white;border:0;border-radius:12px;padding:12px 18px;font:inherit;cursor:pointer}</style></head>
+<body><main id="loading"><h1>쇼핑메이트</h1><p id="message">시나리오와 한국어 음성을 불러오는 중입니다…</p><button id="retry" hidden onclick="location.reload()">다시 시도</button></main>
+<script>
+(async function(){
+  try {
+    const paths=Array.from({length:9},(_,i)=>'shopping-cartesia-parts/part-'+String(i).padStart(3,'0')+'.txt');
+    const results=await Promise.all(paths.map(async p=>{const r=await fetch(p,{cache:'no-cache'});if(!r.ok)throw Error(p+' HTTP '+r.status);return r.text()}));
+    const html=results.join('');
+    if(html.length!==12394291||!html.startsWith('<!doctype html>')||!html.includes('</html>'))throw Error('시나리오 데이터가 완전하지 않습니다.');
+    document.open();document.write(html);document.close();
+  } catch(err) {
+    document.getElementById('message').textContent='불러오기에 실패했습니다. '+err.message;
+    document.getElementById('retry').hidden=false;
+    console.error(err);
+  }
+})();
+</script></body></html>
