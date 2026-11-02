@@ -8,7 +8,7 @@
     const paths=Array.from({length:9},(_,i)=>'shopping-cartesia-parts/part-'+String(i).padStart(3,'0')+'.txt');
     const results=await Promise.all(paths.map(async p=>{const r=await fetch(p,{cache:'no-cache'});if(!r.ok)throw Error(p+' HTTP '+r.status);return r.text()}));
     const html=results.join('');
-    if(html.length!==12394600||!html.startsWith('<!doctype html>')||!html.includes('</html>'))throw Error('시나리오 데이터가 완전하지 않습니다.');
+    if(html.length!==12037230||!html.startsWith('<!doctype html>')||!html.includes('</html>'))throw Error('시나리오 데이터가 완전하지 않습니다.');
     document.open();document.write(html);document.close();
   } catch(err) {
     document.getElementById('message').textContent='불러오기에 실패했습니다. '+err.message;
