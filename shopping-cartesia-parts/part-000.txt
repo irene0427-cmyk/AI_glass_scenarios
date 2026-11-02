@@ -75,7 +75,7 @@ body:fullscreen .stage{width:min(100%,calc((100svh - 410px)*16/9))}
       <section class="player" aria-label="시나리오 재생 컨트롤">
         <div class="player-main">
           <div class="scene-caption">
-            <span class="scene-counter" id="scene-counter">SCENE 00 / 06</span>
+            <span class="scene-counter" id="scene-counter">SCENE 01 / 08</span>
             <h1 id="scene-title">쇼핑 모드 켜기</h1>
             <p id="scene-subtitle">쇼핑몰 도착 · 3인칭 시점</p>
           </div>

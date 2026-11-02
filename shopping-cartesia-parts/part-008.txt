@@ -593,7 +593,7 @@ window.SHOPPING_SCENES.unshift({id:'intro',kind:'intro',title:'베트남 쇼핑�
     background.src=img.src;background.alt=scenes[index].alt;
     stage.className=`stage scene-${scenes[index].id}${paused?' is-paused':''}`;
     stage.dataset.scene=String(index);
-    $('scene-counter').textContent=scenes[index].kind==='intro'?'INTRO / TITLE':`SCENE ${String(scenes[index].id).padStart(2,'0')} / 06`;
+    $('scene-counter').textContent=`SCENE ${String(index+1).padStart(2,'0')} / ${String(scenes.length).padStart(2,'0')}`;
     if(scenes[index].kind==='intro'){showTitle();$('subtitle-speaker').textContent='나레이션';$('subtitle-text').textContent='재생 버튼을 누르면 이야기가 시작됩니다.';}
     $('scene-title').textContent=scenes[index].title;
     $('scene-subtitle').textContent=scenes[index].subtitle;
@@ -747,7 +747,7 @@ window.SHOPPING_SCENES.unshift({id:'intro',kind:'intro',title:'베트남 쇼핑�
     paused=false;sound.resume();for(const a of activeAnimations)a.play();
     $('playback-status').textContent=$('phase-label').textContent;syncButtons();
   }
-  $('scene-navigation').innerHTML=scenes.map((s,i)=>`<button class="scene-nav-button" data-scene="${i}" aria-label="씬 ${s.id}: ${s.title}"><span class="nav-number">${s.id==='intro'?'시작':String(s.id).padStart(2,'0')}</span><span>${s.short}</span></button>`).join('');
+  $('scene-navigation').innerHTML=scenes.map((s,i)=>`<button class="scene-nav-button" data-scene="${i}" aria-label="씬 ${i+1}: ${s.title}"><span class="nav-number">${String(i+1).padStart(2,'0')}</span><span>${s.short}</span></button>`).join('');
   $('scene-navigation').addEventListener('click',event=>{const button=event.target.closest('button');if(button)selectScene(Number(button.dataset.scene));});
   $('play-button').addEventListener('click',()=>{sound.unlock();if(running){paused?resume():pause();}else start(finishedAll?0:sceneIndex);});
   $('replay-button').addEventListener('click',()=>{sound.unlock();start(sceneIndex);});
