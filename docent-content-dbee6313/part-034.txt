@@ -198,7 +198,7 @@ window.ShoppingAudio=class {
     $('scene-subtitle').textContent=scenes[index].subtitle;
     setPhase('scene-only','장면 먼저 보기',0);
     if(index===0)showTitle();
-    subtitle('','재생 버튼을 눌러 이야기를 시작하세요.');
+    subtitle('','재생 버튼을 눌러 AI 글래스 사용 장면을 확인해 보세요.');
     syncButtons();syncNavigation();
     // No scene overlay exists at this point. The scene-only clock starts after decode.
     return true;

@@ -106,6 +106,10 @@ body:fullscreen .stage{width:min(100%,calc((100svh - 410px)*16/9))}
 .artwork-scan .artwork-sweep{stroke:#b6a0ff;stroke-width:2;animation:artwork-sweep 1.5s ease-in-out infinite}
 @keyframes artwork-sweep{from{transform:translateY(12px)}to{transform:translateY(402px)}}
 @media(prefers-reduced-motion:reduce){.artwork-scan .artwork-sweep{animation:none;transform:translateY(207px)}}
+
+/* Shared caption sizing for both scenarios. */
+.subtitle-bar .subtitle-text,.subtitle-bar[data-role] .subtitle-text{font-size:clamp(19px,1.7vw,28px);line-height:1.65}.subtitle-speaker:empty{display:none}
+@media(max-width:650px){.subtitle-bar .subtitle-text,.subtitle-bar[data-role] .subtitle-text{font-size:19px}}
 </style>
 </head>
 <body>
@@ -130,7 +134,7 @@ body:fullscreen .stage{width:min(100%,calc((100svh - 410px)*16/9))}
         </section>
       </div>
 
-      <div class="subtitle-bar" role="status" aria-live="polite"><span id="subtitle-speaker" class="subtitle-speaker"></span><p id="subtitle-text" class="subtitle-text">재생 버튼을 눌러 이야기를 시작하세요.</p></div>
+      <div class="subtitle-bar" role="status" aria-live="polite"><span id="subtitle-speaker" class="subtitle-speaker"></span><p id="subtitle-text" class="subtitle-text">재생 버튼을 눌러 AI 글래스 사용 장면을 확인해 보세요.</p></div>
 <section class="player" aria-label="시나리오 재생 컨트롤">
         <div class="player-main">
           <div class="scene-caption">

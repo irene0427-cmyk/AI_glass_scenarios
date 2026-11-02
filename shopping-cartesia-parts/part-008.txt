@@ -594,7 +594,7 @@ window.SHOPPING_SCENES.unshift({id:'intro',kind:'intro',title:'정보·가격·�
     stage.className=`stage scene-${scenes[index].id}${paused?' is-paused':''}`;
     stage.dataset.scene=String(index);
     $('scene-counter').textContent=`SCENE ${String(index+1).padStart(2,'0')} / ${String(scenes.length).padStart(2,'0')}`;
-    if(scenes[index].kind==='intro'){showTitle();$('subtitle-speaker').textContent='나레이션';$('subtitle-text').textContent='재생 버튼을 누르면 이야기가 시작됩니다.';}
+    if(scenes[index].kind==='intro'){showTitle();$('subtitle-speaker').textContent='';$('subtitle-text').textContent='재생 버튼을 눌러 AI 글래스 사용 장면을 확인해 보세요.';}
     $('scene-title').textContent=scenes[index].title;
     $('scene-subtitle').textContent=scenes[index].subtitle;
     setPhase('scene-only','장면 먼저 보기',0);
